@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SSSAPI Example(Vue.js)</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
+    />
+    <style type="text/css">
+      html {
+        background-color: #ebdcf5;
+      }
+      body {
+        padding: 20px 10px;
+      }
+
+      table {
+        margin: 40px auto;
+        box-shadow: 0px 2px 4px rgb(55 47 56 / 25%);
+        max-width: 600px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="title has-text-centered">SSSAPI Example</h1>
+    <h2 class="subtitle has-text-centered">(Vue.js)</h2>
+
+    <table class="table is-fullwidth">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>名前</th>
+          <th>かな</th>
+          <th>English</th>
+        </tr>
+      </thead>
+
+      <tbody id="app">
+        <!-- ここにデータが挿入される -->
+        <template v-for="item in items">
+          <!-- 挿入するデータのテンプレート -->
+          <tr :key="item.id">
+            <td class="id">{{ item.id }}</td>
+            <td class="name">{{ item.name }}</td>
+            <td class="kana">{{ item.kana }}</td>
+            <td class="en">{{ item.en }}</td>
+          </tr>
+          <!-- /挿入するデータのテンプレート -->
+        </template>
+        <!-- /ここにデータが挿入される -->
+      </tbody>
+    </table>
+
+    <script src="https://unpkg.com/vue@next"></script>
+    <script>
+      const API_URL = "https://api.sssapi.app/P6-UQD_usZfHC93t7gtos";
+
+      const App = {
+        data() {
+          return {
+            items: [],
+          };
+        },
+        mounted() {
+          this.fetchData();
+        },
+        methods: {
+          fetchData() {
+            fetch(API_URL).then((response) => {
+              const resData = response.json();
+
+              if (response.status != 200) {
+                // APIの呼び出しが失敗した場合
+                console.log(response.status);
+                resData.then((error) => alert(JSON.stringify(error, null, 2)));
+              }
+
+              // APIの呼び出しが成功した場合
+              resData.then((data) => {
+                // 取得したデータを挿入
+                this.items = data;
+              });
+            });
+          },
+        },
+      };
+      Vue.createApp(App).mount("#app");
+    </script>
+  </body>
+</html>

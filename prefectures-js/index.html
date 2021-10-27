@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SSSAPI Example(Vanilla JS)</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
+    />
+    <style type="text/css">
+      html {
+        background-color: #ebdcf5;
+      }
+      body {
+        padding: 20px 10px;
+      }
+
+      table {
+        margin: 40px auto;
+        box-shadow: 0px 2px 4px rgb(55 47 56 / 25%);
+        max-width: 600px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="title has-text-centered">SSSAPI Example</h1>
+    <h2 class="subtitle has-text-centered">(Vanilla JS)</h2>
+
+    <table class="table is-fullwidth">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>名前</th>
+          <th>かな</th>
+          <th>English</th>
+        </tr>
+      </thead>
+      <tbody id="container">
+        <!-- ここにデータが挿入される -->
+      </tbody>
+    </table>
+
+    <!-- 挿入するデータのテンプレート -->
+    <template id="template">
+      <tr>
+        <td class="id"></td>
+        <td class="name"></td>
+        <td class="kana"></td>
+        <td class="en"></td>
+      </tr>
+    </template>
+
+    <script>
+      window.onload = function () {
+        // ロード時にAPIを呼び出す
+        const API_URL = "https://api.sssapi.app/P6-UQD_usZfHC93t7gtos";
+        fetch(API_URL).then((response) => {
+          if (response.status != 200) {
+            // APIの呼び出しが失敗した場合
+            console.log(response.status);
+            return response
+              .json()
+              .then((error) => alert(JSON.stringify(error, null, 2)));
+          }
+
+          // APIの呼び出しが成功した場合
+          // template要素の取得
+          const template = document.getElementById("template");
+
+          return response
+            .json() // JSONデータを取得
+            .then((data) => {
+              // 取得したデータを挿入
+              data.forEach((v) => {
+                // templateを複製
+                const item = template.content.cloneNode(true);
+
+                // 各項目の設定
+                item.querySelector(".id").textContent = v.id;
+                item.querySelector(".name").textContent = v.name;
+                item.querySelector(".kana").textContent = v.kana;
+                item.querySelector(".en").textContent = v.en;
+
+                // 要素の追加
+                document.getElementById("container").appendChild(item);
+              });
+            });
+        });
+      };
+    </script>
+  </body>
+</html>

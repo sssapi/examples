@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SSSAPI Example(Vanilla JS)</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
+    />
+    <style type="text/css">
+      html {
+        background-color: #ebdcf5;
+      }
+      body {
+        padding: 20px 10px;
+      }
+
+      table {
+        margin: 40px auto;
+        box-shadow: 0px 2px 4px rgb(55 47 56 / 25%);
+        max-width: 600px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="title has-text-centered">SSSAPI Example</h1>
+    <h2 class="subtitle has-text-centered">(Vanilla JS / Random)</h2>
+    <p class="has-text-centered">ボタンを押すとランダムに都道府県を表示するサンプル</p>
+
+    <div class="has-text-centered" style="margin-top: 1rem;">
+      <button onclick="onClick();">ボタン</button>
+    </div>
+
+    <table class="table is-fullwidth">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>名前</th>
+          <th>かな</th>
+          <th>English</th>
+        </tr>
+      </thead>
+      <tbody id="container">
+        <!-- ここにデータが挿入される -->
+      </tbody>
+    </table>
+
+    <!-- 挿入するデータのテンプレート -->
+    <template id="template">
+      <tr>
+        <td class="id"></td>
+        <td class="name"></td>
+        <td class="kana"></td>
+        <td class="en"></td>
+      </tr>
+    </template>
+
+    <script>
+      // 変数定義
+      let items = [];
+
+      // 起動時の処理
+      window.onload = function () {
+        // ロード時にAPIを呼び出す
+        const API_URL = "https://api.sssapi.app/P6-UQD_usZfHC93t7gtos";
+        fetch(API_URL).then((response) => {
+          if (response.status != 200) {
+            // APIの呼び出しが失敗した場合
+            console.log(response.status);
+            return response
+              .json()
+              .then((error) => alert(JSON.stringify(error, null, 2)));
+          }
+
+          // APIの呼び出しが成功した場合
+
+          return response
+            .json() // JSONデータを取得
+            .then((data) => items = data ); // 取得したデータの保存
+        });
+      };
+
+      // ボタンを押した際の処理
+      function onClick() {
+        // 乱数の取得
+        const length = items.length; // 都道府県リストの件数
+        const index = Math.floor(length * Math.random()); // 取得するインデックス
+        const v = items[index]; // 取得する 都道府県リストの要素
+
+        // template要素の取得
+        const template = document.getElementById("template");
+
+        // templateを複製
+        const item = template.content.cloneNode(true);
+
+        // 各項目の設定
+        item.querySelector(".id").textContent = v.id;
+        item.querySelector(".name").textContent = v.name;
+        item.querySelector(".kana").textContent = v.kana;
+        item.querySelector(".en").textContent = v.en;
+
+        // 現在の要素を削除
+        document.getElementById("container").innerHTML = "";
+        // 取得した要素の追加
+        document.getElementById("container").appendChild(item);
+      }
+    </script>
+  </body>
+</html>
